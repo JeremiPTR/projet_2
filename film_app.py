@@ -33,8 +33,8 @@ if "selected_film_id" in st.session_state:
     st.markdown(f"- **Année** : {film['startYear']}")
     st.markdown(f"- **Genres** : {film['genres']}")
 
-    if pd.notna(film["backdrop_path"]):
-        image_url = f"https://image.tmdb.org/t/p/w500{film['backdrop_path']}"
+    if pd.notna(film["poster_path"]):
+        image_url = f"https://image.tmdb.org/t/p/w500{film['poster_path']}"
         st.image(image_url, use_container_width=True)
 
     if st.button("🔙 Retour aux résultats"):
@@ -60,30 +60,31 @@ else:
 
             for index, row in resultats_dedoublonnes.iterrows():
                 with st.container():
-                    bouton = st.button(
-                        f" {row['frenchTitle']} ({row['startYear']}) - {row['genres']}",
-                        key=f"film_{row['movie_ID']}",
-                    )
-                    if bouton:
-                        st.session_state["selected_film_id"] = row["movie_ID"]
-                        st.stop()
 
                     # Présentation visuelle du film
                     col1, col2 = st.columns([1, 3])
                     with col1:
-                        if pd.notna(row["backdrop_path"]):
+                        if pd.notna(row["poster_path"]):
                             image_url = (
-                                f"https://image.tmdb.org/t/p/w500{row['backdrop_path']}"
+                                f"https://image.tmdb.org/t/p/w500{row['poster_path']}"
                             )
                             st.image(image_url, width=120)
                     with col2:
+                        bouton = st.button(
+                            f" {row['frenchTitle']} ",
+                            key=f"film_{row['movie_ID']}",
+                        )
+                        if bouton:
+                            st.session_state["selected_film_id"] = row["movie_ID"]
+
                         st.markdown(
                             f"""
-                            ### {row['frenchTitle']}  
                             - **Année** : {row['startYear']}  
                             - **Genre** : {row['genres']}  
+                            - **Note** : {row['averageRating']}
                             """
                         )
-                    st.markdown("---")
+
+                st.markdown("---")
         else:
             st.error("Aucun film trouvé.")
